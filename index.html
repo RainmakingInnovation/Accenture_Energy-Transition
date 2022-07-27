@@ -1595,8 +1595,11 @@
 
         var spinner = new Spinner(opts).spin(target);
 
-        d3.select("#radar-toggle-btn").attr("class", "left-sidebar-btn active");
-        d3.select(".popup-bg").style("display", "none");
+        d3.select("#radar-toggle-btn")
+        .attr("class", "left-sidebar-btn active");
+
+        d3.select(".popup-bg")
+        .style("display", "none");
     
         var svg = d3
           .select("#chart-container")
@@ -1658,6 +1661,7 @@
           // &&
           // row['Inc.-Compass'] ==  1
           // )
+          var filteredDataWhenIncCompass = [];
           data.forEach(row => {
             row['Challenge (Narrative)'] = row['Challenge (Narrative)'].replace(/,/g, ""); // remove comma as it create issue while toggle yearly/maturity
             row['Challenge (Narrative)'] = row['Challenge (Narrative)'].replace(/@/g, ""); // remove comma as it create issue while toggle yearly/maturity
@@ -1668,8 +1672,15 @@
               row['Challenge (Narrative)'] = (row['Challenge (Narrative)'].split(') '))[1]
             } else {
               row['Challenge (Narrative)'] = row['Challenge (Narrative)']
-            }            
-          })
+            } 
+            
+            if(row['Inc. Compass']=="TRUE"){
+              filteredDataWhenIncCompass.push(row);
+            }
+          });
+
+          data = filteredDataWhenIncCompass;
+
           var check = d3.nest()
           .key(function(d) {
               return d['Cluster']
@@ -1713,7 +1724,8 @@
             if(!oppSpaceObj[row['Cluster']].includes(row['Challenge (Narrative)'])){
               oppSpaceObj[row['Cluster']].push(row['Challenge (Narrative)'])
             }
-          })
+
+          });
 
           data = data.filter(function(d) {
             return +d["Founded"] >= 1995 && d["Cluster"] != '' && d["Cluster"] != 'Space Design & Mgmt';
@@ -2599,15 +2611,15 @@
                   legendMouseOver("Other", "other");
                 })
                 .on("mouseout", keyMouseOut)
-                // .on("click", function(d) {
-                //   if (filterKey === "other") {
-                //     filterKey = "";
-                //     updateNodes("key", filterKey);
-                //   } else {
-                //     filterKey = "other";
-                //     updateNodes("key", filterKey);
-                //   }
-                // });
+                .on("click", function(d) {
+                  if (filterKey === "other") {
+                    filterKey = "";
+                    updateNodes("key", filterKey);
+                  } else {
+                    filterKey = "other";
+                    updateNodes("key", filterKey);
+                  }
+                });
     
               // rectangular legend text
               legendRect
@@ -2620,15 +2632,15 @@
                   legendMouseOver("Other", "other");
                 })
                 .on("mouseout", keyMouseOut)
-                // .on("click", function(d) {
-                //   if (filterKey === "other") {
-                //     filterKey = "";
-                //     updateNodes("key", filterKey);
-                //   } else {
-                //     filterKey = "other";
-                //     updateNodes("key", filterKey);
-                //   }
-                // });
+                .on("click", function(d) {
+                  if (filterKey === "other") {
+                    filterKey = "";
+                    updateNodes("key", filterKey);
+                  } else {
+                    filterKey = "other";
+                    updateNodes("key", filterKey);
+                  }
+                });
     
               // circle legend item
               legendCircle
@@ -2642,15 +2654,15 @@
                   legendMouseOver(d, "color");
                 })
                 .on("mouseout", keyMouseOut)
-                // .on("click", function(d) {
-                //   if (filterKey === d) {
-                //     filterKey = "";
-                //     updateNodes("key", filterKey);
-                //   } else {
-                //     filterKey = d;
-                //     updateNodes("key", filterKey);
-                //   }
-                // });
+                .on("click", function(d) {
+                  if (filterKey === d) {
+                    filterKey = "";
+                    updateNodes("key", filterKey);
+                  } else {
+                    filterKey = d;
+                    updateNodes("key", filterKey);
+                  }
+                });
     
               // circle legend item circle
               legendCircle
@@ -2665,15 +2677,15 @@
                   legendMouseOver(d, "color");
                 })
                 .on("mouseout", keyMouseOut)
-                // .on("click", function(d) {
-                //   if (filterKey === d) {
-                //     filterKey = "";
-                //     updateNodes("key", filterKey);
-                //   } else {
-                //     filterKey = d;
-                //     updateNodes("key", filterKey);
-                //   }
-                // });
+                .on("click", function(d) {
+                  if (filterKey === d) {
+                    filterKey = "";
+                    updateNodes("key", filterKey);
+                  } else {
+                    filterKey = d;
+                    updateNodes("key", filterKey);
+                  }
+                });
 
               // legend title
               var legendTitle = keySVG
@@ -2999,7 +3011,7 @@
                 // display Europe countries
                 nodes.attr("opacity", (d) => {
                   if(d.Country == "Europe" && (
-                    stateHero == 'all' || (stateHero == 'hero' && d.Hero == '1')
+                    stateHero == 'all' || (stateHero == 'hero' && d.Hero == 'TRUE')
                   )){
                     return 1;
                   } else {
@@ -3008,7 +3020,7 @@
                 })
                 nodes_acquired.attr("opacity", (d) => {
                   if(d.Country == "Europe" && (
-                    stateHero == 'all' || (stateHero == 'hero' && d.Hero == '1')
+                    stateHero == 'all' || (stateHero == 'hero' && d.Hero == 'TRUE')
                   )){
                     return 1;
                   } else {
@@ -3020,10 +3032,10 @@
                 stateEurope = "global";
                 // display all countries
                 nodes.attr("opacity", (d) => {
-                  return (stateHero == 'all' || (stateHero == 'hero' && d.Hero == '1')) ? 1 : 0.3;
+                  return (stateHero == 'all' || (stateHero == 'hero' && d.Hero == 'TRUE')) ? 1 : 0.3;
                 });
                 nodes_acquired.attr("opacity", (d) => {
-                  return (stateHero == 'all' || (stateHero == 'hero' && d.Hero == '1')) ? 1 : 0.3;
+                  return (stateHero == 'all' || (stateHero == 'hero' && d.Hero == 'TRUE')) ? 1 : 0.3;
                 });
               }
             }
@@ -3033,7 +3045,7 @@
                 stateHero = 'hero';
                 // display hero
                 nodes.attr('opacity', (d) => {
-                  if(d.Hero == '1' && (
+                  if(d.Hero == 'TRUE' && (
                     stateEurope == 'global' || (stateEurope == 'europe' && d.Country == 'Europe')
                     )){
                       return 1;
@@ -3042,7 +3054,7 @@
                   }
                 })
                 nodes_acquired.attr('opacity', (d) => {
-                  if(d.Hero == '1' && (
+                  if(d.Hero == 'TRUE' && (
                     stateEurope == 'global' || (stateEurope == 'europe' && d.Country == 'Europe')
                     )){
                       return 1;
@@ -3176,6 +3188,131 @@
     
               // fade/highlight nodes on legend click
               function updateNodes(type, filterKey) {
+                
+                if (filterKey === "") {
+                  data.forEach(function (d) {
+                    d.opacity = 1;
+                  });
+                  nodes.attr("opacity", 1);
+                  nodes_acquired.attr("opacity", 1);
+                  legendCircle.attr("opacity", 1);
+                  legendRect.attr("opacity", 1);
+                  segmentsLabelBand.attr("opacity", function (d) {
+                    d.opacity = 1;
+                    return d.opacity;
+                  });
+                }
+
+                if (filterKey === "other"){//"acquired" || filterKey === "public") {
+                  nodes.attr("opacity", function (d) {
+                    if (d["Funding Stage"] !== "Acquired" && d["Funding Stage"] !== "Public") {
+                      d.opacity = 0.3;
+                    }
+                    return d.opacity;
+                  });
+
+                  nodes_acquired.attr("opacity", function (d) {
+                    if (d["Funding Stage"] === "Acquired" || d["Funding Stage"] === "Public") {
+                      d.opacity = 1;
+                    }
+                    return d.opacity;
+                  });
+
+                  legendCircle.attr("opacity", 0.3);
+                  legendRect.attr("opacity", 1);
+                }
+
+                if (filterKey === "activity") {
+                  nodes.attr("opacity", function (d) {
+                    if (
+                      d["Activity/Acquisition Time"] != "" &&
+                      d["Funding Stage"] !== "Acquired"  && d["Funding Stage"] !== "Public"
+                    ) {
+                      d.opacity = 1;
+                    } else {
+                      d.opacity = 0.3;
+                    }
+                    return d.opacity;
+                  });
+
+                  nodes_acquired.attr("opacity", function (d) {
+                    if (d["Activity/Acquisition Time"] != "") {
+                      d.opacity = 1;
+                    } else {
+                      d.opacity = 0.3;
+                    }
+                    return d.opacity;
+                  });
+                  legendCircle.attr("opacity", 0.3);
+
+                  legendRect.attr("opacity", 0.3);
+                }
+
+                if (
+                  filterKey !== "other" && //"acquired" && filterKey !== "public" &&
+                  filterKey !== "" &&
+                  type === "key"
+                ) {
+                  nodes.attr("opacity", function (v) {
+                    if (
+                      fundingCategoryScale(v["Funding Stage"]) === filterKey
+                    ) {
+                      v.opacity = 1;
+                    } else {
+                      v.opacity = 0.3;
+                    }
+                    return v.opacity;
+                  });
+
+                  nodes_acquired.attr("opacity", function (d) {
+                    if (d["Funding Stage"] === "Acquired" || d["Funding Stage"] === "Public") {
+                      d.opacity = 0.3;
+                    }
+                    return d.opacity;
+                  });
+
+                  legendCircle.attr("opacity", function (d) {
+                    if (d === filterKey) {
+                      return 1;
+                    } else {
+                      return 0.3;
+                    }
+                  });
+
+                  legendRect.attr("opacity", 0.3);
+                }
+                if (type === "focus area" && filterKey !== "") {
+                  nodes.attr("opacity", function (d) {
+                    if (d["Innovation Area"].toLowerCase() !== filterKey) {
+                      d.opacity = 0.3;
+                    } else {
+                      d.opacity = 1;
+                    }
+                    return d.opacity;
+                  });
+
+                  nodes_acquired.attr("opacity", function (d) {
+                    if (d["Opportunity Space"].toLowerCase() !== filterKey) {
+                      d.opacity = 0.3;
+                    } else {
+                      d.opacity = 1;
+                    }
+                    return d.opacity;
+                  });
+
+                  //segment_data.data.value.key
+                  segmentsLabelBand.attr("opacity", function (d) {
+                    if (d.data.value.key === filterKey) {
+                      d.opacity = 1;
+                    } else {
+                      d.opacity = 0.3;
+                    }
+                    return d.opacity;
+                  });
+                }
+              }
+              // fade/highlight nodes on legend click
+              function updateNodesOld(type, filterKey) {
                 if (filterKey === "") {
                   data.forEach(function(d) {
                     d.opacity = 1;
@@ -3863,9 +4000,9 @@
                 || 
                 (stateHero == 'all' && stateEurope == 'europe' && _d.Country == 'Europe') 
                 ||
-                (stateHero == 'hero' && _d.Hero == '1' && stateEurope == 'global') 
+                (stateHero == 'hero' && _d.Hero == 'TRUE' && stateEurope == 'global') 
                 || 
-                (stateHero == 'hero' && _d.Hero == '1' && stateEurope == 'europe' && _d.Country == 'Europe') 
+                (stateHero == 'hero' && _d.Hero == 'TRUE' && stateEurope == 'europe' && _d.Country == 'Europe') 
               ) ? 1 : 0.3;
             }
             // label compass on mouse out  ------------------------------------------------------------------------------------------------
@@ -3905,12 +4042,21 @@
     
             // legend item on mouse out ------------------------------------------------------------------------------------------------
             function keyMouseOut() {
+
+              nodes.attr("opacity", function (d) {
+                    return d.opacity;
+                  });
+                  nodes_acquired.attr("opacity", function (d) {
+                    return d.opacity;
+                  });
+
+                  /* comment below code as we want to highlight nodes on click
               nodes.attr("opacity", function(_d) {
                 return getNodesOpacity(_d);
               });
               nodes_acquired.attr("opacity", function(_d) {
                 return getNodesOpacity(_d);
-              });
+              });*/
             }
 
             // display lateral right tooltip on mouse over outter compass label 
