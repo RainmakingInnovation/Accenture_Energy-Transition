@@ -4221,6 +4221,14 @@
                 }
               });
 
+              nodes_acquired.attr("opacity", (v) => {
+                if (v["Funding Stage"] === d["Funding Stage"]) {
+                  return 1;
+                } else {
+                  return 0.3;
+                }
+              });
+
               d3.select(".node-tooltip").style("transform", `translate(${x}px,${y}px)`);
             }
 
