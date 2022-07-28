@@ -772,7 +772,7 @@
         }
 
         .left-sidebar-header img {
-          width: 100px;
+          width: 135px;
           object-fit: contain;
         }
 
@@ -1221,6 +1221,16 @@
       padding-bottom: 3px;
     }
 
+    .node-tooltip-website {
+      font-family: "Graphik Regular";
+      padding-bottom: 3px;
+    }
+
+    .node-tooltip-solutionspace {
+      font-family: "Graphik Regular";
+      padding-bottom: 3px;
+    }
+
     .node-tooltip-description {
       font-family: "Graphik Regular";
       padding-bottom: 3px;
@@ -1280,6 +1290,8 @@
       <div class="node-tooltip">
         <div class="node-tooltip-title"></div>
         <div class="node-tooltip-funding"></div>
+        <div class="node-tooltip-website"></div>
+        <div class="node-tooltip-solutionspace"></div>
         <div class="node-tooltip-description"></div>
       </div>
       <div class="popup-bg">
@@ -1524,6 +1536,8 @@
           innerRadius = 60,
           outerRadius = 300,
           nodeRadius = 3.3,
+          heroNodeRadius = 4.3,
+          nodeHoverRadius = 1.5,
           nodeOtherWidth = 5,
           keySize = 10,
           keySpacing = 10,
@@ -1537,7 +1551,7 @@
           geoFilter = "All Startups",
           filters = {type: "All Startups", geotype: "All Startups"}
           logoPath = "assets/accenture_logo.png",//logoIngka.png",
-          titleLogoWidth = 80,
+          titleLogoWidth = 100, // 80
           titleLogoHeight = 50,
           hoverOn = 0;
           hoverSegment = "",
@@ -1664,7 +1678,7 @@
           var filteredDataWhenIncCompass = [];
           data.forEach(row => {
             row['Challenge (Narrative)'] = row['Challenge (Narrative)'].replace(/,/g, ""); // remove comma as it create issue while toggle yearly/maturity
-            row['Challenge (Narrative)'] = row['Challenge (Narrative)'].replace(/@/g, ""); // remove comma as it create issue while toggle yearly/maturity
+            row['Challenge (Narrative)'] = row['Challenge (Narrative)'].replace(/@/g, " "); // remove comma as it create issue while toggle yearly/maturity
 
             row['Cluster']="temp"; // it is temporarily added, so that chart will be drawn and at then end hide it
 
@@ -2071,7 +2085,7 @@
     
               // need to fix.
               var fundingCategoryDomain = [
-                "Unfunded",
+                "Private",
                 "Seed",
                 "Series A",
                 "Series B",
@@ -2082,7 +2096,7 @@
               ];
     
               var fundingCategoryRange = [
-              "Unfunded",
+              "Private",
                 "Seed",
                 "Series A",
                 "Series B",
@@ -2099,7 +2113,7 @@
                 .domain(fundingCategoryDomain)
                 .range(fundingCategoryRange);
 
-              var colors = ["#D3D3D3","#a3e8ff", "#0BC2FF", "#006B8E", "#003D51"];
+              var colors = ["#DCAFFF","#A055F5A3", "#A055F5", "#A100FF", "#7500C0"];
 
               var nodeColorScale = d3
                 .scaleOrdinal()
@@ -2499,6 +2513,8 @@
                 .append("g")
                 .selectAll(".test-class")
                 .data(function(d, dataIdx) {
+                  // disable wrapping 
+                  /*
                   var limit = labelFontData.limit;
                   return textWrap(
                     d.data.value.key.toUpperCase().replace(/_/g," "),
@@ -2506,14 +2522,18 @@
                     limit,
                     dataIdx
                   );
+                  */
+                 return [{text_data:d.data.value.key.toUpperCase(),dataIdx:dataIdx,percentage:d.percentage,lineLength:1}];
                 })
                 .enter()
                 .append("text")
                 .attr("class", "label opp-space-label-text")
                 .attr("dy", function(d, i) {
+                  //return "3.4em";
+                  
                   if (d.percentage >= 25 && d.percentage <= 75) {
                     if (d.lineLength === 1) {
-                      return "-2.6em";
+                      return "-2.3em";
                     } else if (d.lineLength === 2) {
                       if (i === 0) {
                         return "-3em";
@@ -2555,7 +2575,7 @@
                 })
                 .append("textPath")
                 .attr("xlink:href", function(d, i) {
-                  const _dataTextValue = Array.isArray(d.text_data) ? d.text_data[0] : d.text_data;
+                  const _dataTextValue = d.text_data;//Array.isArray(d.text_data) ? d.text_data[0] : d.text_data;
                   const labelPath = _dataTextValue.split(" ")
                   let labelPathId;
                   if(labelPath[0] != ""){
@@ -2567,9 +2587,9 @@
                   );
                 })
                 .attr("startOffset", "50%")
-                .attr("font-size", "6.3px")
+                .attr("font-size", "10px") // 6.3px
                 .text(function(d) {
-                  return d.data
+                  return d.text_data;//.data
                 });
 
               var labelRadius = outerRadius * 1.055;
@@ -2603,7 +2623,7 @@
                 .classed("key-item-other", true)
                 .attr("width", 8.8)
                 .attr("height", 8.8)
-                .attr("fill", "#FFD55F")
+                .attr("fill", "#65b82dff")
                 .attr("x", -4)
                 .attr("y", 3)
                 .attr("transform", "translate(0, -7) rotate(45)")
@@ -2624,7 +2644,7 @@
               // rectangular legend text
               legendRect
                 .append("text")
-                .text("Public/Acquired")// Others
+                .text("Acquired")// Others
                 .classed("key-labels key-label", true)
                 .attr("dx", "1.3em")
                 .attr("dy", "0.2em")
@@ -3101,7 +3121,7 @@
 
               var radiusSize = 0.1;
 
-              const legendItemsNames = ["Unfunded","Seed", "Series A", "Series B", "Series C"];
+              const legendItemsNames = ["Private","Seed", "Series A", "Series B", "Series C"];
 
               
               // circle nodes in compass
@@ -3121,7 +3141,12 @@
                 .attr("class", "nodes")
                 .attr("r", function(d) {
                   if (legendItemsNames.includes(d["Funding Stage"])) {
-                    return nodeRadius;
+                    if(d["Hero"]=="TRUE"){
+                      return heroNodeRadius;
+                    }
+                    else{
+                      return nodeRadius;
+                    }                    
                   }
                 })
                 .attr("cx", function(d) {
@@ -3131,7 +3156,7 @@
                   return d.yearY;
                 })
                 .attr("fill", function(d) {
-                  // if(d["Funding Stage"]=="Unfunded"){
+                  // if(d["Funding Stage"]=="Private"){
                   //   console.log(d["Funding Stage"] + " color=> "+nodeColorScale(
                   //   fundingCategoryScale(d["Funding Stage"])
                   //   ));
@@ -3141,9 +3166,25 @@
                     );
                   })
                   .on("mouseover", function(d) {
-                    showNodeTooltip(d)
+                    if(d["Hero"]=="TRUE"){
+                      d3.select(this).attr("r",heroNodeRadius+nodeHoverRadius);
+                    }
+                    else{
+                      d3.select(this).attr("r",nodeRadius+nodeHoverRadius);
+                    }
+
+                    showNodeTooltip(d);
                   })
-                  .on("mouseout", hideNodeTooltip)
+                  .on("mouseout", function(d) {
+                    if(d["Hero"]=="TRUE"){
+                      d3.select(this).attr("r",heroNodeRadius);
+                    }
+                    else{
+                      d3.select(this).attr("r",nodeRadius);
+                    }
+                    hideNodeTooltip(d);
+                  })
+                  //.on("mouseout", hideNodeTooltip)
                   
 
               // rectangular nodes in compass
@@ -3177,11 +3218,12 @@
                 })
                 .attr("x", 0)
                 .attr("y", 0)
-                .attr("fill", "#FFD55F")
+                .attr("fill", "#65b82dff")
                 .attr("transform", function(d) {
                   return "translate(" + d.yearX + "," + d.yearY + ") rotate(45)";
                 })
                 .on("mouseover", function(d) {
+                  
                   showNodeTooltip(d)
                 })
                 .on("mouseout", hideNodeTooltip)
@@ -4129,7 +4171,8 @@
 
             // display tooltip nodes -----------------------------------------------------------------------------------------
             function showNodeTooltip(d) {      
-              const fundingList = ["Unfunded"]
+              
+              const fundingList = ["Private"]
               let fundingVal = 0
               if (fundingList.indexOf(d["Funding Stage"]) < 0) {
                 if (+getValueWithoutCurrencySymbol(d["Total Funding (USD)"]) == 0) {
@@ -4146,6 +4189,8 @@
 
               d3.select(".node-tooltip-title").text(d["Name"]);
               d3.select(".node-tooltip-funding").text("Total Funding: " + (fundingVal));
+              d3.select(".node-tooltip-website").text("Startup Website: " + (d["Website"]));
+              d3.select(".node-tooltip-solutionspace").text("Solution Space (Cluster): " + (d["Solution Space (Cluster)"]));
               d3.select(".node-tooltip-description").text(d["Description"].replace(/�۪/g, "'"));
 
               d3.select(".node-tooltip")
@@ -4166,6 +4211,15 @@
               } else {
                 y = y + padding;
               }
+
+              // set similar type nodes funding stage elements as highlighted and other as dimmed
+              nodes.attr("opacity", function(v) {
+                if (v["Funding Stage"] === d["Funding Stage"]) {
+                  return 1;
+                } else {
+                  return 0.3;
+                }
+              });
 
               d3.select(".node-tooltip").style("transform", `translate(${x}px,${y}px)`);
             }
@@ -4492,7 +4546,7 @@
                     })
                     .attr("x", 0)
                     .attr("y", 0)
-                    .attr("fill", "#FFD55F")
+                    .attr("fill", "#65b82dff")
                     .attr("transform", function(d) {
                       if (radial === "maturity") {
                         var x = d.x;
