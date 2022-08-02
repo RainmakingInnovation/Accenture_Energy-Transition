@@ -164,8 +164,9 @@
         }
 
         .nodes {
+          /*
           stroke: #333;
-          stroke-width: 1px;
+          stroke-width: 1px;*/
           transition: opacity .2s linear;
         }
 
@@ -2092,7 +2093,8 @@
                 "Series C",
                 "Series D",
                 "Series E",
-                "Public"
+                "Public",
+                "Acquired"
               ];
     
               var fundingCategoryRange = [
@@ -2103,7 +2105,8 @@
                 "Series C+",
                 "Series C+",
                 "Series C+",
-                "Series C+"
+                "Series C+",
+                "Acquired"
               ];
     
               var fundingCategoryRangeUnique = [...new Set(fundingCategoryRange)];
@@ -2113,7 +2116,7 @@
                 .domain(fundingCategoryDomain)
                 .range(fundingCategoryRange);
 
-              var colors = ["#DCAFFF","#A055F5A3", "#A055F5", "#A100FF", "#7500C0"];
+              var colors = ["#c27ba0ff","#8e7cc3ff", "#6fa8dcff", "#76a5afff", "#93c47dff"];
 
               var nodeColorScale = d3
                 .scaleOrdinal()
@@ -2623,7 +2626,7 @@
                 .classed("key-item-other", true)
                 .attr("width", 8.8)
                 .attr("height", 8.8)
-                .attr("fill", "#65b82dff")
+                .attr("fill", "#ffd966ff")
                 .attr("x", -4)
                 .attr("y", 3)
                 .attr("transform", "translate(0, -7) rotate(45)")
@@ -2666,9 +2669,14 @@
               legendCircle
                 .append("circle")
                 .classed("key-item-other", true)
-                .attr("r", 4.4)
+                .attr("r", function(d){
+                  if(d=="Acquired"){
+                    return 0;
+                  }else{ return 4.4;
+                  }
+                })
                 .attr("fill", function(d) {
-                  return nodeColorScale(d);
+                    return nodeColorScale(d);
                 })
                 .on("mouseover", function(d) {
                   legendMouseOver(d, "color");
@@ -2688,7 +2696,12 @@
               legendCircle
                 .append("text")
                 .text(function(d) {
-                  return d;
+                  if(d=="Acquired"){
+                    return "";
+                  }else{
+                    return d;
+                  }
+                  
                 })
                 .classed("key-labels key-label", true)
                 .attr("dx", "1.8em")
@@ -3122,7 +3135,6 @@
               var radiusSize = 0.1;
 
               const legendItemsNames = ["Private","Seed", "Series A", "Series B", "Series C"];
-
               
               // circle nodes in compass
               var nodes = chartSVG
@@ -3131,7 +3143,7 @@
               .enter()
               .append("a")
               .attr("xlink:href", function(d) {
-                return d['Website']
+                getStartupWebsiteURL(d);
                 })
                 .attr("target", "_blank")
                 .append("circle")
@@ -3142,7 +3154,7 @@
                 .attr("r", function(d) {
                   if (legendItemsNames.includes(d["Funding Stage"])) {
                     if(d["Hero"]=="TRUE"){
-                      return heroNodeRadius;
+                      return 0;
                     }
                     else{
                       return nodeRadius;
@@ -3155,6 +3167,7 @@
                 .attr("cy", function(d) {
                   return d.yearY;
                 })
+              
                 .attr("fill", function(d) {
                   // if(d["Funding Stage"]=="Private"){
                   //   console.log(d["Funding Stage"] + " color=> "+nodeColorScale(
@@ -3183,18 +3196,23 @@
                       d3.select(this).attr("r",nodeRadius);
                     }
                     hideNodeTooltip(d);
-                  })
+                  });
                   //.on("mouseout", hideNodeTooltip)
                   
-
+                  var acquiredData = data.filter(function (item) {
+                    //var deptts = deptselected.split(',');
+                        if (item["Funding Stage"] == "Acquired")
+                            return true;
+                    return false;
+                });
               // rectangular nodes in compass
               var nodes_acquired = chartSVG
                 .selectAll("nodes-acquired")
-                .data(data)
+                .data(acquiredData)
                 .enter()
                 .append("a")
                 .attr("xlink:href", function(d) {
-                  return d['Website']
+                  getStartupWebsiteURL(d);
                 })
                 .attr("target", "_blank")
                 .append("rect")
@@ -3218,7 +3236,7 @@
                 })
                 .attr("x", 0)
                 .attr("y", 0)
-                .attr("fill", "#65b82dff")
+                .attr("fill", "#ffd966ff")
                 .attr("transform", function(d) {
                   return "translate(" + d.yearX + "," + d.yearY + ") rotate(45)";
                 })
@@ -3227,16 +3245,53 @@
                   showNodeTooltip(d)
                 })
                 .on("mouseout", hideNodeTooltip)
+
+                var herosData = data.filter(function (item) {
+                    //var deptts = deptselected.split(',');
+                        if (item["Hero"] == "TRUE")
+                            return true;
+                    return false;
+                });
+              // Stars nodes for Hero in compass
+              var nodes_Stars = chartSVG
+                .selectAll("nodes_Stars")
+                .data(herosData)
+                .enter()
+                .append("a")
+                .attr("xlink:href", function(d) {
+                  getStartupWebsiteURL(d);
+                })
+                .attr("target", "_blank")
+                .append("path")
+                .attr("class", "nodes nodes_Stars")
+                .attr("transform", function(d) {
+                  return "translate(" + d.yearX + "," + d.yearY + ")";
+                })
+                .attr("d", "M 0 4.1875 l -4.188 2.202 l 0.7995 -4.6635 L -6.7763 -1.577 l 4.6822 -0.6803 L 0 -6.5 l 2.094 4.2428 l 4.6822 0.6803 l -3.3878 3.303 l 0.7995 4.6635")
+                .attr("fill", function(d) {
+                  if(d.Hero=="TRUE" && d['Funding Stage']=="Acquired"){
+                    return "#ffd966ff";
+                  }else{
+                    return nodeColorScale(
+                    fundingCategoryScale(d["Funding Stage"])
+                    );
+                  }
+                  })
+                .on("mouseover", function(d) {
+                  showNodeTooltip(d)
+                })
+                .on("mouseout",function(){
+                 hideNodeTooltip()})
     
               // fade/highlight nodes on legend click
               function updateNodes(type, filterKey) {
-                
                 if (filterKey === "") {
                   data.forEach(function (d) {
                     d.opacity = 1;
                   });
                   nodes.attr("opacity", 1);
                   nodes_acquired.attr("opacity", 1);
+                  nodes_Stars.attr("opacity", 1);
                   legendCircle.attr("opacity", 1);
                   legendRect.attr("opacity", 1);
                   segmentsLabelBand.attr("opacity", function (d) {
@@ -3254,6 +3309,12 @@
                   });
 
                   nodes_acquired.attr("opacity", function (d) {
+                    if (d["Funding Stage"] === "Acquired" || d["Funding Stage"] === "Public") {
+                      d.opacity = 1;
+                    }
+                    return d.opacity;
+                  });
+                  nodes_Stars.attr("opacity", function (d) {
                     if (d["Funding Stage"] === "Acquired" || d["Funding Stage"] === "Public") {
                       d.opacity = 1;
                     }
@@ -3285,6 +3346,16 @@
                     }
                     return d.opacity;
                   });
+
+                  nodes_Stars.attr("opacity", function (d) {
+                    if (d["Funding Stage"] !== "Public") {
+                      d.opacity = 1;
+                    } else {
+                      d.opacity = 0.3;
+                    }
+                    return d.opacity;
+                  });
+
                   legendCircle.attr("opacity", 0.3);
 
                   legendRect.attr("opacity", 0.3);
@@ -3312,6 +3383,13 @@
                     }
                     return d.opacity;
                   });
+                  
+                  nodes_Stars.attr("opacity", function (d) {
+                    if (d["Funding Stage"] === "Public" && nodes_Stars._groups[0][i].__data__['Funding Stage']=="Acquired") {
+                      d.opacity = 1;
+                    }
+                    return d.opacity;
+                  });
 
                   legendCircle.attr("opacity", function (d) {
                     if (d === filterKey) {
@@ -3333,7 +3411,7 @@
                     return d.opacity;
                   });
 
-                  nodes_acquired.attr("opacity", function (d) {
+                  nodes_Stars.attr("opacity", function (d) {
                     if (d["Opportunity Space"].toLowerCase() !== filterKey) {
                       d.opacity = 0.3;
                     } else {
@@ -3353,6 +3431,16 @@
                   });
                 }
               }
+
+              function getStartupWebsiteURL(d){
+              if(d.Website && d.Website.toLowerCase().indexOf("https://")>=0){
+                //d.Website.includes("https://")
+                  	return d.Website;
+                  }
+                  else{
+                    	return "http://"+d.Website;
+                    } 
+            }
               // fade/highlight nodes on legend click
               function updateNodesOld(type, filterKey) {
                 if (filterKey === "") {
@@ -3901,6 +3989,17 @@
                     };
                   });
 
+                  nodes_Stars
+                  .transition()
+                  .duration(animationDuration)
+                  .attrTween("transform", function(d) {
+                    var i = d3.interpolate(d.x, d.yearX);
+                    var j = d3.interpolate(d.y, d.yearY);
+                    return function(t) {
+                      return "translate(" + i(t) + "," + j(t) + ")";
+                    };
+                  });
+
                 maturity_list.forEach(function(d) {
                   var id = "#" + d.name.toLowerCase() + "-label-path-text";
                   d3.select(id).remove();
@@ -3954,6 +4053,17 @@
                     var j = d3.interpolate(d.yearY, d.y);
                     return function(t) {
                       return "translate(" + i(t) + "," + j(t) + ") rotate(45)";
+                    };
+                  });
+
+                  nodes_Stars
+                  .transition()
+                  .duration(animationDuration)
+                  .attrTween("transform", function(d) {
+                    var i = d3.interpolate(d.yearX, d.x);
+                    var j = d3.interpolate(d.yearY, d.y);
+                    return function(t) {
+                      return "translate(" + i(t) + "," + j(t) + ")";
                     };
                   });
 
@@ -4034,6 +4144,14 @@
                 }
               });
 
+              nodes_Stars.attr("opacity", function(d) {
+                if (d["Challenge (Narrative)"] === segment_data.data.value.key && d['Cluster'] === segment_data.data.value.parent) {
+                  return 1;
+                } else {
+                  return 0.3;
+                }
+              });
+
             }
     
             function getNodesOpacity(_d) {
@@ -4061,6 +4179,9 @@
               nodes_acquired.attr("opacity", function(_d) {
                 return getNodesOpacity(_d);
               });
+              nodes_Stars.attr("opacity", function(_d) {
+                return getNodesOpacity(_d);
+              });
             }
     
             // legend item on mouse over  ------------------------------------------------------------------------------------------------
@@ -4068,11 +4189,27 @@
               if (type === "other") {
                 // nodes_acquired.attr("opacity", 1);
                 nodes.attr("opacity", 0.3);
+                nodes_Stars.attr("opacity", function(d,i){
+                  if(nodes_Stars._groups[0][i].__data__['Funding Stage']=="Acquired"){
+                    return 1;
+                  }else{
+                    return 0.3;
+                  }
+                });
               }
               if (type === "color") {
                 nodes.attr("opacity", function(d) {
 
                   if(fundingCategoryScale(d["Funding Stage"]) === data){
+                    return 1;
+                  } else {
+                    return 0.3;
+                  } 
+                });
+                 nodes_Stars.attr("opacity", function(d) {
+
+                  if(fundingCategoryScale(d["Funding Stage"]) === data){
+                    debugger;
                     return 1;
                   } else {
                     return 0.3;
@@ -4089,6 +4226,9 @@
                     return d.opacity;
                   });
                   nodes_acquired.attr("opacity", function (d) {
+                    return d.opacity;
+                  });
+                  nodes_Stars.attr("opacity", function (d) {
                     return d.opacity;
                   });
 
@@ -4186,8 +4326,7 @@
               if (fundingVal == "$-") {
                 fundingVal = "-"
               }
-
-              d3.select(".node-tooltip-title").text(d["Name"]);
+              d3.select(".node-tooltip-title").text(d.Hero=="TRUE"? d.Name+" (Hero)":d.Name);
               d3.select(".node-tooltip-funding").text("Total Funding: " + (fundingVal));
               d3.select(".node-tooltip-website").text("Startup Website: " + (d["Website"]));
               d3.select(".node-tooltip-solutionspace").text("Solution Space (Cluster): " + (d["Solution Space (Cluster)"]));
@@ -4228,6 +4367,13 @@
                   return 0.3;
                 }
               });
+              nodes_Stars.attr("opacity", (v) => {
+                if (v["Funding Stage"] === d["Funding Stage"]) {
+                  return 1;
+                } else {
+                  return 0.3;
+                }
+              });
 
               d3.select(".node-tooltip").style("transform", `translate(${x}px,${y}px)`);
             }
@@ -4241,6 +4387,9 @@
                   return d.opacity;
                 });
                 nodes_acquired.attr("opacity", function(d) {
+                  return d.opacity;
+                });
+                nodes_Stars.attr("opacity", function(d) {
                   return d.opacity;
                 });
               // }
@@ -4554,7 +4703,7 @@
                     })
                     .attr("x", 0)
                     .attr("y", 0)
-                    .attr("fill", "#65b82dff")
+                    .attr("fill", "#ffd966ff")
                     .attr("transform", function(d) {
                       if (radial === "maturity") {
                         var x = d.x;
