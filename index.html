@@ -3143,7 +3143,7 @@
               .enter()
               .append("a")
               .attr("xlink:href", function(d) {
-                getStartupWebsiteURL(d);
+                return getStartupWebsiteURL(d);
                 })
                 .attr("target", "_blank")
                 .append("circle")
@@ -3212,7 +3212,7 @@
                 .enter()
                 .append("a")
                 .attr("xlink:href", function(d) {
-                  getStartupWebsiteURL(d);
+                  return getStartupWebsiteURL(d);
                 })
                 .attr("target", "_blank")
                 .append("rect")
@@ -3259,7 +3259,7 @@
                 .enter()
                 .append("a")
                 .attr("xlink:href", function(d) {
-                  getStartupWebsiteURL(d);
+                  return getStartupWebsiteURL(d);
                 })
                 .attr("target", "_blank")
                 .append("path")
@@ -3433,14 +3433,13 @@
               }
 
               function getStartupWebsiteURL(d){
-              if(d.Website && d.Website.toLowerCase().indexOf("https://")>=0){
-                //d.Website.includes("https://")
-                  	return d.Website;
+                if(d.Website && d.Website.toLowerCase().indexOf("https://")>=0){                  
+                    return d.Website;
                   }
                   else{
-                    	return "http://"+d.Website;
+                      return "http://"+d.Website;
                     } 
-            }
+              }
               // fade/highlight nodes on legend click
               function updateNodesOld(type, filterKey) {
                 if (filterKey === "") {
