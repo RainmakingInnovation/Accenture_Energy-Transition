@@ -1554,7 +1554,9 @@
           logoPath = "assets/accenture_logo.png",//logoIngka.png",
           titleLogoWidth = 100, // 80
           titleLogoHeight = 50,
-          hoverOn = 0;
+          hoverOn = 0,
+          heroFilterActive="false"
+          selectedFilter="none",
           hoverSegment = "",
           leftWidth = 1100,
           leftHeight = 650,
@@ -2607,6 +2609,7 @@
                 .data(fundingCategoryRangeUnique)
                 .enter()
                 .append("g")
+                .attr("class","legends")
                 .attr("transform", function(d, i) {
                   var h = keySize + keySpacing;
                   var offset = 0;
@@ -2636,10 +2639,12 @@
                 .on("mouseout", keyMouseOut)
                 .on("click", function(d) {
                   if (filterKey === "other") {
+                    selectedFilter="none";
                     filterKey = "";
                     updateNodes("key", filterKey);
                   } else {
                     filterKey = "other";
+                    selectedFilter="none";
                     updateNodes("key", filterKey);
                   }
                 });
@@ -2657,10 +2662,12 @@
                 .on("mouseout", keyMouseOut)
                 .on("click", function(d) {
                   if (filterKey === "other") {
+                    selectedFilter="none";
                     filterKey = "";
                     updateNodes("key", filterKey);
                   } else {
                     filterKey = "other";
+                    selectedFilter="other";
                     updateNodes("key", filterKey);
                   }
                 });
@@ -2679,14 +2686,17 @@
                     return nodeColorScale(d);
                 })
                 .on("mouseover", function(d) {
-                  legendMouseOver(d, "color");
+                    legendMouseOver(d, "color");
                 })
                 .on("mouseout", keyMouseOut)
                 .on("click", function(d) {
+                  
                   if (filterKey === d) {
                     filterKey = "";
+                    selectedFilter="none";
                     updateNodes("key", filterKey);
                   } else {
+                    selectedFilter=d;
                     filterKey = d;
                     updateNodes("key", filterKey);
                   }
@@ -2706,15 +2716,18 @@
                 .classed("key-labels key-label", true)
                 .attr("dx", "1.8em")
                 .attr("dy", "0.35em")
-                .on("mouseover", function(d) {
-                  legendMouseOver(d, "color");
+                .on("mouseover", function (d) {
+                    legendMouseOver(d, "color");
                 })
                 .on("mouseout", keyMouseOut)
                 .on("click", function(d) {
+                  
                   if (filterKey === d) {
                     filterKey = "";
+                    selectedFilter="none";
                     updateNodes("key", filterKey);
                   } else {
+                    selectedFilter=d;
                     filterKey = d;
                     updateNodes("key", filterKey);
                   }
@@ -2986,7 +2999,7 @@
                             radiusSize,
                             nodeSecondData[i].values[j].value
                             )
-                            if (congestion > 5) {
+                            if (congestion > 4) {
                               d.resultsYear = assignRandom(
                                 tmp_startAngleMin,
                                 tmp_endAngleMax,
@@ -3077,6 +3090,7 @@
               if (stateHero == 'all'){
                 stateHero = 'hero';
                 // display hero
+                heroFilterActive="true";
                 nodes.attr('opacity', (d) => {
                   if(d.Hero == 'TRUE' && (
                     stateEurope == 'global' || (stateEurope == 'europe' && d.Country == 'Europe')
@@ -3097,6 +3111,7 @@
                   })
               } else {
                 stateHero = "all";
+                heroFilterActive="false";
                 // display all
                 nodes.attr("opacity", (d) => {
                   return (stateEurope == 'global' || (stateEurope == 'europe' && d.Country == 'Europe')) ? 1 : 0.3;
@@ -3104,7 +3119,11 @@
                 nodes_acquired.attr("opacity", (d) => {
                   return (stateEurope == 'global' || (stateEurope == 'europe' && d.Country == 'Europe')) ? 1 : 0.3;
                 });
+                if(selectedFilter !== 'none'){
+                updateNodes("key",selectedFilter);
               }
+              }
+              
             }
 
               // year-maturiy button
@@ -3143,7 +3162,7 @@
               .enter()
               .append("a")
               .attr("xlink:href", function(d) {
-                return getStartupWebsiteURL(d);
+               return getStartupWebsiteURL(d);
                 })
                 .attr("target", "_blank")
                 .append("circle")
@@ -3212,7 +3231,7 @@
                 .enter()
                 .append("a")
                 .attr("xlink:href", function(d) {
-                  return getStartupWebsiteURL(d);
+                 return getStartupWebsiteURL(d);
                 })
                 .attr("target", "_blank")
                 .append("rect")
@@ -3220,16 +3239,16 @@
                 .attr("id", function(d) {
                   return d["Name"].toLowerCase().replace(/ /g, "-");
                 })
-                .attr("width", function(d) {
-                  if (!legendItemsNames.includes(d["Funding Stage"]) && (d["Funding Stage"]=="Public" || d["Funding Stage"]=="Acquired")) {
+                .attr("width", function (d) {
+                  if (!legendItemsNames.includes(d["Funding Stage"]) && (d['Hero'] != 'TRUE') && (d["Funding Stage"] == "Public" || d["Funding Stage"] == "Acquired")) {
                     return nodeOtherWidth
                   } else {
                     return 0;
                   }
                 })
-                .attr("height", function(d) {
-                  if (!legendItemsNames.includes(d["Funding Stage"]) && (d["Funding Stage"]=="Public" || d["Funding Stage"]=="Acquired")) {
-                    return nodeOtherWidth
+                .attr("height", function (d) {
+                  if (!legendItemsNames.includes(d["Funding Stage"]) && (d['Hero'] != 'TRUE') && (d["Funding Stage"] == "Public" || d["Funding Stage"] == "Acquired")) {
+                    return nodeOtherWidth;
                   } else {
                     return 0;
                   }
@@ -3259,7 +3278,7 @@
                 .enter()
                 .append("a")
                 .attr("xlink:href", function(d) {
-                  return getStartupWebsiteURL(d);
+                 return getStartupWebsiteURL(d);
                 })
                 .attr("target", "_blank")
                 .append("path")
@@ -3433,13 +3452,14 @@
               }
 
               function getStartupWebsiteURL(d){
-                if(d.Website && d.Website.toLowerCase().indexOf("https://")>=0){                  
-                    return d.Website;
+              if(d.Website && d.Website.toLowerCase().indexOf("https://")>=0){
+                //d.Website.includes("https://")
+                  	return d.Website;
                   }
                   else{
-                      return "http://"+d.Website;
+                    	return "http://"+d.Website;
                     } 
-              }
+            }
               // fade/highlight nodes on legend click
               function updateNodesOld(type, filterKey) {
                 if (filterKey === "") {
@@ -4154,6 +4174,7 @@
             }
     
             function getNodesOpacity(_d) {
+              
               return (
                 (stateHero == 'all' && stateEurope == 'global') 
                 || 
@@ -4168,26 +4189,39 @@
             function labelCompassMouseOut(d) {
               
                 d3.select("#opp-space-tooltip-container").style("opacity", "0")
-              segmentsLabelBand.attr("opacity", function(_d) {
+                if(selectedFilter != "none"){
+                  if(selectedFilter == "other"){
+                    updateNodes("key", "other");
+                  }else{
+                    updateNodes("key", selectedFilter);
+                  }
+                }else{
+                  segmentsLabelBand.attr("opacity", function(_d) {
                 return _d.opacity;
               });
 
-              nodes.attr("opacity", function(_d) {
-                return getNodesOpacity(_d);
-              });
-              nodes_acquired.attr("opacity", function(_d) {
-                return getNodesOpacity(_d);
-              });
-              nodes_Stars.attr("opacity", function(_d) {
-                return getNodesOpacity(_d);
-              });
+              nodes.attr("opacity", function (_d) {
+                  return getNodesOpacity(_d);
+                });
+                nodes_acquired.attr("opacity", function (_d) {
+                  return getNodesOpacity(_d);
+                });
+                nodes_Stars.attr("opacity", function (_d) {
+                  return getNodesOpacity(_d);
+                });
+                if (d3.select("g.legends").style("opacity") == 0.3) {
+                }
+              }
+              if (heroFilterActive == "true") {
+                stateHero = "all";
+                toggleAllHero();
+              }
             }
     
             // legend item on mouse over  ------------------------------------------------------------------------------------------------
             function legendMouseOver(data, type) {
               if (type === "other") {
-                // nodes_acquired.attr("opacity", 1);
-                nodes.attr("opacity", 0.3);
+                nodes_acquired.attr("opacity", 1);
                 nodes_Stars.attr("opacity", function(d,i){
                   if(nodes_Stars._groups[0][i].__data__['Funding Stage']=="Acquired"){
                     return 1;
@@ -4195,6 +4229,7 @@
                     return 0.3;
                   }
                 });
+                nodes.attr("opacity", 0.3);
               }
               if (type === "color") {
                 nodes.attr("opacity", function(d) {
@@ -4208,7 +4243,6 @@
                  nodes_Stars.attr("opacity", function(d) {
 
                   if(fundingCategoryScale(d["Funding Stage"]) === data){
-                    debugger;
                     return 1;
                   } else {
                     return 0.3;
@@ -4230,7 +4264,11 @@
                   nodes_Stars.attr("opacity", function (d) {
                     return d.opacity;
                   });
-
+                  if (heroFilterActive == "true") {
+                stateHero = 'all';
+                toggleAllHero();
+              }
+                  
                   /* comment below code as we want to highlight nodes on click
               nodes.attr("opacity", function(_d) {
                 return getNodesOpacity(_d);
