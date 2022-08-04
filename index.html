@@ -4337,9 +4337,9 @@
                 }
               d3.select("#opp-space-tooltip-container").style("opacity", "1");
               d3.select(".opp-space-tooltip-title").text((segment_data.data.value.key).toUpperCase().replace(/_/g, "/"));
-              d3.select("#ostt-3").text(formatFunding(segmentFunding.toFixed(2)));
+              d3.select("#ostt-3").text("$"+formatFunding(segmentFunding.toFixed(2)));
               d3.select("#ostt-5").text(numberOfStartups);
-              d3.select("#ostt-7").text(formatFunding(avgFunding.toFixed(2)));
+              d3.select("#ostt-7").text("$"+formatFunding(avgFunding.toFixed(2)));
             }
 
             function getValueWithoutCurrencySymbol(inputNumberWithCurrencySign){
@@ -4361,12 +4361,12 @@
                 fundingVal = "$" + formatFunding(getValueWithoutCurrencySymbol(d["Total Funding (USD)"]))
               }
               if (fundingVal == "$-") {
-                fundingVal = "-"
+                fundingVal = "-";
               }
               d3.select(".node-tooltip-title").text(d.Hero=="TRUE"? d.Name+" (Hero)":d.Name);
               d3.select(".node-tooltip-funding").text("Total Funding: " + (fundingVal));
               d3.select(".node-tooltip-website").text("Startup Website: " + (d["Website"]));
-              d3.select(".node-tooltip-solutionspace").text("Solution Space (Cluster): " + (d["Solution Space (Cluster)"]));
+              d3.select(".node-tooltip-solutionspace").text("Solution Space: " + (d["Solution Space (Cluster)"]));
               d3.select(".node-tooltip-description").text(d["Description"].replace(/�۪/g, "'"));
 
               d3.select(".node-tooltip")
