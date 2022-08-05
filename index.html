@@ -41,13 +41,6 @@
           overflow: hidden;
         }
 
-        #compass-description-container{
-          grid-column: 3 / span 2;
-          grid-row: 1 / span 1;
-          overflow: hidden;
-          margin-top: 20%;
-        }
-
         #control-container {
           grid-column: 3 / span 1;
           grid-row: 3 / span 1;
@@ -81,22 +74,40 @@
           font-weight: bold;
           src: local("Graphik Bold"), url("GraphikBold.woff") format("woff");
         }
+        
+        #compass-description-container{
+          grid-column: 3 / span 2;
+          grid-row: 1 / span 1;
+          overflow: hidden;
+          margin-top: 20%;
+        }
 
         .segment {
           stroke: white;
           stroke-width: 2px;
         }
 
-        .mature-segments {
-          fill: #dfdfdf;
+        .a-segments {
+          fill: #D9D9D9;
         }
 
-        .emerging-segments {
-          fill: #e9e9e9;
+        .b-segments {
+          fill: #E6E6E6;
         }
 
-        .nascent-segments {
-          fill: #f4f4f4;
+        .c-segments {
+          fill: #F2F2F2;
+        }
+        .private-segments {
+          fill: #BFBFBF;
+        }
+
+        .seed-segments {
+          fill: #CCCCCC;
+        }
+
+        .acquired-segments {
+          fill: #FAFAFA
         }
 
         .segment-band {
@@ -163,7 +174,7 @@
           font-family: "Graphik Bold";
         }
 
-        .maturity-labels {
+        .fundingKey-labels {
           fill: #8b8b8b;
           text-anchor: middle;
           font-size: 8px;
@@ -600,7 +611,7 @@
         }
 
         #button-16 .checkbox:checked + .knobs:before {
-          content: "Maturity";
+          content: "Stage";
           left: 56px;
           background-color: #FBD914;
           color: #7500c0;
@@ -1252,7 +1263,7 @@
     }
 
     .opp-space-tooltip {
-      margin-top: 15px;
+margin-top: 15px;
       padding: 0.5em 1em;
       background: rgba(255, 255, 255, 1.0);
       text-align: left;
@@ -1296,17 +1307,26 @@
 
     <body>
       <div id="compass-description-container">
-<p class="key-label">
-        Hello! Welcome to the Accenture - Accelerating the Energy Transition Compass. This is developed with information from 300+ startups to visualise and show key venture activities around Energy Transition, including Economic & Regulatory Incentive, Social Movement, Micro Scale, End Consumer, Decarbonising Construction, and Solving for Complexity.
-      </p>
-      <p class="key-label">
-        Most startups are presented as dots, and 'Hero' startups are presented as stars, which are great illustrative examples of the areas. You can move your mouse to hover on all startups to see more information, as well as click on them to go to the websites. Startups are colour coded with the funding stages as shown in the 'Funding Key' below. You can also click on the stages to filter the startups on the compass. There are 2 toggles below the 'Funding Key', the top toggle rearranges the startups by either founding year or funding stage; the bottom toggle is used to either show all startups with the same opacity or highlight the 'Hero' startups by making non-'Hero' startups slightly transparent.
-      </p>   
-      <p class="key-label">
-        Hope you find this compass useful!
-      </p>
+        <p class="key-label">
+          Hello! Welcome to the Accenture - Accelerating the Energy Transition Compass. This is developed with information
+          from 300+ startups to visualise and show key venture activities around Energy Transition, including Economic &
+          Regulatory Incentive, Social Movement, Micro Scale, End Consumer, Decarbonising Construction, and Solving for
+          Complexity.
+        </p>
+        <p class="key-label">
+          Most startups are presented as dots, and 'Hero' startups are presented as stars, which are great illustrative
+          examples of the areas. You can move your mouse to hover on all startups to see more information, as well as click on
+          them to go to the websites. Startups are colour coded with the funding stages as shown in the 'Funding Key' below.
+          You can also click on the stages to filter the startups on the compass. There are 2 toggles below the 'Funding Key',
+          the top toggle rearranges the startups by either founding year or funding stage; the bottom toggle is used to either
+          show all startups with the same opacity or highlight the 'Hero' startups by making non-'Hero' startups slightly
+          transparent.
+        </p>
+        <p class="key-label">
+          Hope you find this compass useful!
+        </p>
       </div>
-        <div id="key-container"></div>
+      <div id="key-container"></div>
       <div class="node-tooltip">
         <div class="node-tooltip-title"></div>
         <div class="node-tooltip-funding"></div>
@@ -1905,7 +1925,7 @@
                         Funding: w["Total Funding Amount Currency (in USD)"],
                         Website: w["Website"],
                         'Founded': w["Founded"],
-                        'Maturity': w["Maturity"]
+                        'Maturity': w["Funding Stage"]
                       };
                       bar_data.push(obj);
                   }
@@ -2196,16 +2216,18 @@
                 .sortKeys(themeSort)
                 .entries(data);
     
-              var count_by_maturity = d3
+              var count_by_fundingStage = d3
                 .nest()
                 .key(function(d) {
-                  return d["Maturity"];
+                  return d["Funding Stage"];
                 })
                 .rollup(function(v) {
                   return v.length;
                 })
                 .entries(data);
-   
+                
+                // here we have to add logic of sort objects by funding count
+    
               var count_by_year = d3
                 .nest()
                 .key(function(d) {
@@ -2227,26 +2249,45 @@
                 yearList.push(d.key);
               });
     
-              var maturity_list = [
-                { name: "Mature", inner: 50, outer: 180 },
-                { name: "Emerging", inner: 180, outer: 240 },
-                { name: "Nascent", inner: 240, outer: 300 }
+              var fundingKey_list = [
+                { name: "Private", inner: 50, outer: 100 },
+                { name: "Seed", inner: 100, outer: 140 },
+                { name: "Series A", inner: 140, outer: 180 },
+                { name: "Series B", inner: 180, outer: 220 },
+                { name: "Series C", inner: 220, outer: 260 },
+                { name: "Acquired", inner: 260, outer: 300 }
               ];
     
-              var nascentArc = d3
+              var acquiredArc = d3
                 .arc()
-                .innerRadius(maturity_list[2].inner)
-                .outerRadius(maturity_list[2].outer);
+                .innerRadius(fundingKey_list[5].inner)
+                .outerRadius(fundingKey_list[5].outer);
     
-              var emergingArc = d3
+              var series_cPlusArc = d3
                 .arc()
-                .innerRadius(maturity_list[1].inner)
-                .outerRadius(maturity_list[1].outer);
+                .innerRadius(fundingKey_list[4].inner)
+                .outerRadius(fundingKey_list[4].outer);
     
-              var matureArc = d3
+              var series_bArc = d3
                 .arc()
-                .innerRadius(maturity_list[0].inner)
-                .outerRadius(maturity_list[0].outer);
+                .innerRadius(fundingKey_list[3].inner)
+                .outerRadius(fundingKey_list[3].outer);
+
+                var series_aArc = d3
+                .arc()
+                .innerRadius(fundingKey_list[2].inner)
+                .outerRadius(fundingKey_list[2].outer);
+    
+              var seedArc = d3
+                .arc()
+                .innerRadius(fundingKey_list[1].inner)
+                .outerRadius(fundingKey_list[1].outer);
+    
+              var privateArc = d3
+                .arc()
+                .innerRadius(fundingKey_list[0].inner)
+                .outerRadius(fundingKey_list[0].outer);
+    
     
               var themeArc = d3
                 .arc()
@@ -2305,8 +2346,8 @@
     
               // compass filter ----------------------------------------------------------------------------------------------------
 
-              // maturtity
-              maturity_list.forEach(function(v) {
+              // fundingStage
+              fundingKey_list.forEach(function(v) {
                 var tmpArc = d3
                   .arc()
                   .innerRadius(v.inner)
@@ -2760,63 +2801,181 @@
                 .attr("y", -110)
                 .attr("x", -60);
     
-              // compass inner maturity labels
-              var nascentLabelRadius = maturity_list[2].outer - 15;
-              var emergingLabelRadius = maturity_list[1].outer - 15;
-              var matureLabelRadius = maturity_list[0].outer - 15;
+              // compass inner funding stage labels
+              var acquiredLabelRadius = fundingKey_list[5].outer - 15;
+              var series_cPlusLabelRadius = fundingKey_list[4].outer - 15;
+              var series_bLabelRadius = fundingKey_list[3].outer - 15;
+              var series_aLabelRadius = fundingKey_list[2].outer - 15;
+              var seedLabelRadius = fundingKey_list[1].outer - 15;
+              var privateLabelRadius = fundingKey_list[0].outer - 15;
+              var tmp_innerRadiusMin;
+              var tmp_outerRadiusMax;
     
-              var nascentLabel = chartSVG
+              var acquiredLabel = chartSVG
                 .append("g")
-                .classed("maturity-labels", true);
+                .classed("fundingKey-labels", true);
     
-              nascentLabel
+                acquiredLabel
                 .append("def")
                 .append("path")
-                .attr("id", "nascent-label-path")
+                .attr("id", "acquiredLabel-path")
                 .attr(
                   "d",
                   "m " +
-                    -nascentLabelRadius +
+                    -acquiredLabelRadius +
                     " 0 a 50 50 0 1 1 " +
-                    2 * nascentLabelRadius +
+                    2 * acquiredLabelRadius +
                     " 0"
               );
     
-              nascentLabel
+              acquiredLabel
                 .append("text")
-                .attr("class", "maturity-label-text")
-                .attr("id", "nascent-label-path-text")
+                .attr("class", "fundingKey-label-text")
+                .attr("id", "acquiredLabel-path-text")
                 .append("textPath")
-                .attr("xlink:href", "#nascent-label-path")
+                .attr("xlink:href", "#acquiredLabel-path")
                 .attr("startOffset", "50%")
-                .text("Nascent");
-    
-              var emergingLabel = chartSVG
+                .text("Acquired");
+
+                var series_cPlusLabel = chartSVG
                 .append("g")
-                .classed("maturity-labels", true);
+                .classed("fundingKey-labels", true);
     
-              emergingLabel
+                series_cPlusLabel
                 .append("def")
                 .append("path")
-                .attr("id", "emerging-label-path")
+                .attr("id", "series_cPlusLabel-path")
                 .attr(
                   "d",
                   "m " +
-                    -emergingLabelRadius +
+                    -series_cPlusLabelRadius +
                     " 0 a 50 50 0 1 1 " +
-                    2 * emergingLabelRadius +
+                    2 * series_cPlusLabelRadius +
                     " 0"
                 );
     
-              emergingLabel
+                series_cPlusLabel
                 .append("text")
-                .attr("class", "maturity-label-text")
-                .attr("id", "emerging-label-path-text")
+                .attr("class", "fundingKey-label-text")
+                .attr("id", "series_cPlusLabel-path-text")
                 .append("textPath")
-                .attr("xlink:href", "#emerging-label-path")
+                .attr("xlink:href", "#series_cPlusLabel-path")
                 .attr("startOffset", "50%")
-                .text("Emerging");
+                .text("Series C+");
+
+              var series_bLabel = chartSVG
+                .append("g")
+                .classed("fundingKey-labels", true);
     
+                series_bLabel
+                .append("def")
+                .append("path")
+                .attr("id", "series_bLabel-path")
+                .attr(
+                  "d",
+                  "m " +
+                    -series_bLabelRadius +
+                    " 0 a 50 50 0 1 1 " +
+                    2 * series_bLabelRadius +
+                    " 0"
+                );
+    
+                series_bLabel
+                .append("text")
+                .attr("class", "fundingKey-label-text")
+                .attr("id", "series_bLabel-path-text")
+                .append("textPath")
+                .attr("xlink:href", "#series_bLabel-path")
+                .attr("startOffset", "50%")
+                .text("Series B");
+
+                var series_aLabel = chartSVG
+                .append("g")
+                .classed("fundingKey-labels", true);
+    
+                series_aLabel
+                .append("def")
+                .append("path")
+                .attr("id", "series_aLabel-path")
+                .attr(
+                  "d",
+                  "m " +
+                    -series_aLabelRadius +
+                    " 0 a 50 50 0 1 1 " +
+                    2 * series_aLabelRadius +
+                    " 0"
+                );
+    
+                series_aLabel
+                .append("text")
+                .attr("class", "fundingKey-label-text")
+                .attr("id", "series_aLabel-path-text")
+                .append("textPath")
+                .attr("xlink:href", "#series_aLabel-path")
+                .attr("startOffset", "50%")
+                .text("Series A");
+
+              var seedLabel = chartSVG
+                .append("g")
+                .classed("fundingKey-labels", true);
+    
+                seedLabel
+                .append("def")
+                .append("path")
+                .attr("id", "seedLabel-path")
+                .attr(
+                  "d",
+                  "m " +
+                    -seedLabelRadius +
+                    " 0 a 50 50 0 1 1 " +
+                    2 * seedLabelRadius +
+                    " 0"
+                );
+    
+                seedLabel
+                .append("text")
+                .attr("class", "fundingKey-label-text")
+                .attr("id", "seedLabel-path-text")
+                .append("textPath")
+                .attr("xlink:href", "#seedLabel-path")
+                .attr("startOffset", "50%")
+                .text("Seed");
+    
+              var privateLabel = chartSVG
+                .append("g")
+                .classed("fundingKey-labels", true);
+    
+              privateLabel
+                .append("def")
+                .append("path")
+                .attr("id", "privateLabel-path")
+                .attr(
+                  "d",
+                  "m " +
+                    -privateLabelRadius +
+                    " 0 a 50 50 0 1 1 " +
+                    2 * privateLabelRadius +
+                    " 0"
+                );
+    
+              privateLabel
+                .append("text")
+                .attr("class", "fundingKey-label-text")
+                .attr("id", "privateLabel-path-text")
+                .append("textPath")
+                .attr("xlink:href", "#privateLabel-path")
+                .attr("startOffset", "50%")
+                .text("Private");
+                
+           
+              fundingKey_list_elements = [
+                  { name: "Acquired", fn: acquiredLabel },
+                  { name: "Series C+", fn: series_cPlusLabel },
+                  { name: "Series B", fn: series_bLabel },
+                  { name: "Series A", fn: series_aLabel },
+                  { name: "Seed", fn: seedLabel },
+                  { name: "Private", fn: privateLabel }
+                ];
               // compass inner year labels
               count_by_year.forEach(function(d, i) {
                 this["year" + d.key + "LabelRadius"] = d.outer - 10;
@@ -2849,39 +3008,7 @@
                   .text(d.key);
               });
     
-              var matureLabel = chartSVG
-                .append("g")
-                .classed("maturity-labels", true);
-    
-              matureLabel
-                .append("def")
-                .append("path")
-                .attr("id", "mature-label-path")
-                .attr(
-                  "d",
-                  "m " +
-                    -matureLabelRadius +
-                    " 0 a 50 50 0 1 1 " +
-                    2 * matureLabelRadius +
-                    " 0"
-                );
-    
-              matureLabel
-                .append("text")
-                .attr("class", "maturity-label-text")
-                .attr("id", "mature-label-path-text")
-                .append("textPath")
-                .attr("xlink:href", "#mature-label-path")
-                .attr("startOffset", "50%")
-                .text("mature");
-                
-              maturity_list_elements = [
-                { name: "Nascent", fn: nascentLabel },
-                { name: "Emerging", fn: emergingLabel },
-                { name: "Mature", fn: matureLabel }
-              ];
-    
-              maturity_list.forEach(function(d) {
+              fundingKey_list.forEach(function(d) {
                 var id = "#" + d.name.toLowerCase() + "-label-path-text";
                 d3.select(id).remove();
               });
@@ -2894,7 +3021,7 @@
                   return d["Challenge (Narrative)"] + "-" +d["Cluster"];
                 })
                 .key(function(d) {
-                  return d["Maturity"];
+                  return d["Funding Stage"];
                 })
                 .rollup(function(v) {
                   return v.length;
@@ -2921,6 +3048,8 @@
 
               var tmp_startAngleMin;
               var tmp_endAngleMax;
+              var tmp_innerRadiusMin;
+              var tmp_outerRadiusMax;
 
             // position maturity node in the compass
             data.forEach(function(d) {
@@ -2931,17 +3060,17 @@
                   break;
                 }
               }
-              for (i = 0; i < maturity_list.length; i++) {
-                if (d["Maturity"] === maturity_list[i]["name"]) {
-                  tmp_innerRadiusMin = maturity_list[i]["inner"]
-                  tmp_outerRadiusMax = maturity_list[i]["outer"]
+              for (i = 0; i < fundingKey_list.length; i++) {
+                if (d["Funding Stage"] === fundingKey_list[i]["name"]) {
+                  tmp_innerRadiusMin = fundingKey_list[i]["inner"]
+                  tmp_outerRadiusMax = fundingKey_list[i]["outer"]
                   break;
                 }
               }
               for (i = 0; i < nodeData.length; i++) {
                 if (nodeData[i].key === d["Challenge (Narrative)"] + "-" +d["Cluster"]) {
                   for (j = 0; j < nodeData[i].values.length; j++) {
-                    if (nodeData[i].values[j].key === d["Maturity"]) {
+                    if (nodeData[i].values[j].key === d["Funding Stage"] && tmp_innerRadiusMin != undefined) {
                       
                       var congestion = calcCongestion(
                         tmp_startAngleMin,
@@ -2970,7 +3099,7 @@
                           tmp_outerRadiusMax,
                           nodeData[i].values[j]
                         )
-                        indexTracker[d["Challenge (Narrative)"]][d["Maturity"]]["slot"] += 1
+                        indexTracker[d["Challenge (Narrative)"]][d["Funding Stage"]]["slot"] += 1
                       }
                     }
                   }
@@ -3898,24 +4027,24 @@
                     return valA < valB ? -1 : valA > valB ? 1 : valA >= valB ? 0 : NaN;
                   }
 
-                var maturity_data = d3.nest()
+                var fundingKey_data = d3.nest()
                   .key(function(d) {
-                    return d["Maturity"]
+                    return d["Funding Stage"]
                   })
                   .rollup(function(v) {
                     return {startups: v.length}
                   })
                   .sortKeys(maturitySort)
                   .entries(bar_data.filter(function(d) {
-                    return d.Maturity != ""
+                    return d['Funding Stage'] != ""
                   }) )
                 
-                var maxVal = d3.max(maturity_data, function(d) {
+                var maxVal = d3.max(fundingKey_data, function(d) {
                   return d.value.startups
                 })
 
                 var x = d3.scaleBand()
-                  .domain(maturity_data.map(function(d) {
+                  .domain(fundingKey_data.map(function(d) {
                       return d.key
                   }))
                   .range([50, bar_width-50])
@@ -3938,7 +4067,7 @@
                   .call(d3.axisLeft(y).ticks(maxTicks).tickSize(-bar_width+100));
 
                 var bars = barSVG.selectAll(".bar")
-                  .data(maturity_data)
+                  .data(fundingKey_data)
                   .enter().append("rect")
                   .attr("class", "bar")
                   .attr("fill", function(d) {
@@ -3956,7 +4085,7 @@
 
                 barSVG.append("g")
                   .attr("transform", "translate(0," + (bar_height-50) + ")")
-                  .call(d3.axisBottom(x).ticks(maturity_data.length));
+                  .call(d3.axisBottom(x).ticks(fundingKey_data.length));
 
                 barSVG.append("text")             
                 .attr("transform",
@@ -3995,11 +4124,12 @@
               //   return visibility
               // })
             }
-    
+            d3.selectAll(".fundingKey-labels").style("opacity","0")
             // toggle maturity/year nodes
             function switchRadial() {
-              if (radial === "maturity") {
+              if (radial === "Stage") {
                 radial = "year";
+                d3.selectAll(".fundingKey-labels").style("opacity","0")
                 nodes
                   .transition()
                   .duration(animationDuration)  
@@ -4038,7 +4168,7 @@
                     };
                   });
 
-                maturity_list.forEach(function(d) {
+                fundingKey_list.forEach(function(d) {
                   var id = "#" + d.name.toLowerCase() + "-label-path-text";
                   d3.select(id).remove();
                 });
@@ -4064,9 +4194,11 @@
                         + v.index
                     ).attr("opacity", 1);
                   });
+
                 });
               } else {
-                radial = "maturity";
+                radial = "Stage";
+                d3.selectAll(".fundingKey-labels").style("opacity","1")
                 nodes
                   .transition()
                   .duration(animationDuration)
@@ -4120,10 +4252,10 @@
                   });
                 });
 
-                maturity_list_elements.forEach(function(d, i) {
+                fundingKey_list_elements.forEach(function(d, i) {
                   d.fn
                     .append("text")
-                    .attr("class", "maturity-label-text")
+                    .attr("class", "fundingKey-label-text")
                     .attr("id", d.name.toLowerCase() + "-label-path-text")
                     .append("textPath")
                     .attr(
@@ -4514,7 +4646,7 @@
                     .append("g")
                     .attr("transform", "translate(" + hor + "," + ver + ")");
 
-                  if (radial === "maturity") {
+                  if (radial === "Stage") {
                     var tmp_matureSegments = tmp_chartSVG
                       .selectAll("mature-segments")
                       .data([chartPieData[i]])
@@ -4560,14 +4692,13 @@
                       .style("stroke-width", "2px")
                       .attr("fill", "#E9E9E9")
                       .attr("d", emergingArc);
-
                     var tmp_nascentSegments = tmp_chartSVG
                       .selectAll("nascent-segments")
                       .data([chartPieData[i]])
                       .enter()
                       .append("path")
                       .style("fill-opacity", 1)
-                      .attr("class", function(d) {
+                      .attr("class", function (d) {
                         return (
                           "nascent-segments segment-" +
                           d.data.value.key.replace(/ /g, "-").replace(/&/g, "and")
@@ -4708,14 +4839,14 @@
                       );
                     })
                     .attr("cx", function(d) {
-                      if (radial === "maturity") {
+                      if (radial === "Stage") {
                         return d.x;
                       } else {
                         return d.yearX;
                       }
                     })
                     .attr("cy", function(d) {
-                      if (radial === "maturity") {
+                      if (radial === "Stage") {
                         return d.y;
                       } else {
                         return d.yearY;
@@ -4761,7 +4892,7 @@
                     .attr("y", 0)
                     .attr("fill", "#ffd966ff")
                     .attr("transform", function(d) {
-                      if (radial === "maturity") {
+                      if (radial === "Stage") {
                         var x = d.x;
                         var y = d.y;
                       } else {
@@ -5181,7 +5312,7 @@
             loop1:
             for (let hi = 0; hi <= horizontalCuts; hi++) {
               index ++
-            if (index === indexTracker[data["Cluster"]][data["Maturity"]]["slot"]) {
+            if (index === indexTracker[data["Cluster"]][data["Funding Stage"]]["slot"]) {
               horizontalSlot = hi
               verticalSlot = vi
               break loop0
