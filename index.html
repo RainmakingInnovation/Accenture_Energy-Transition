@@ -41,6 +41,13 @@
           overflow: hidden;
         }
 
+        #compass-description-container{
+          grid-column: 3 / span 2;
+          grid-row: 1 / span 1;
+          overflow: hidden;
+          margin-top: 20%;
+        }
+
         #control-container {
           grid-column: 3 / span 1;
           grid-row: 3 / span 1;
@@ -1245,6 +1252,7 @@
     }
 
     .opp-space-tooltip {
+      margin-top: 15px;
       padding: 0.5em 1em;
       background: rgba(255, 255, 255, 1.0);
       text-align: left;
@@ -1287,6 +1295,17 @@
     </head>
 
     <body>
+      <div id="compass-description-container">
+<p class="key-label">
+        Hello! Welcome to the Accenture - Accelerating the Energy Transition Compass. This is developed with information from 300+ startups to visualise and show key venture activities around Energy Transition, including Economic & Regulatory Incentive, Social Movement, Micro Scale, End Consumer, Decarbonising Construction, and Solving for Complexity.
+      </p>
+      <p class="key-label">
+        Most startups are presented as dots, and 'Hero' startups are presented as stars, which are great illustrative examples of the areas. You can move your mouse to hover on all startups to see more information, as well as click on them to go to the websites. Startups are colour coded with the funding stages as shown in the 'Funding Key' below. You can also click on the stages to filter the startups on the compass. There are 2 toggles below the 'Funding Key', the top toggle rearranges the startups by either founding year or funding stage; the bottom toggle is used to either show all startups with the same opacity or highlight the 'Hero' startups by making non-'Hero' startups slightly transparent.
+      </p>   
+      <p class="key-label">
+        Hope you find this compass useful!
+      </p>
+      </div>
         <div id="key-container"></div>
       <div class="node-tooltip">
         <div class="node-tooltip-title"></div>
@@ -2186,7 +2205,7 @@
                   return v.length;
                 })
                 .entries(data);
-    
+   
               var count_by_year = d3
                 .nest()
                 .key(function(d) {
