@@ -24,7 +24,7 @@
         body {
           display: grid;
           grid-template-columns: 146px 800px 160px 200px;
-          grid-template-rows: 280px 160px 380px;
+          grid-template-rows: 280px 140px 380px;
           grid-gap: 0.1em;
           margin: auto;
         }
@@ -37,7 +37,7 @@
 
         #key-container {
           grid-column: 3 / span 1;
-          grid-row: 2 / span 1;
+          grid-row: 3 / span 1;
           overflow: hidden;
         }
 
@@ -47,6 +47,7 @@
           overflow: hidden;
           padding: 10px 20px;
           text-align: center;
+          margin-top: 150px;
         }
 
         #hover-info-container {
@@ -77,7 +78,7 @@
         
         #compass-description-container{
           grid-column: 3 / span 2;
-          grid-row: 1 / span 1;
+          grid-row: 1 / span 2;
           overflow: hidden;
           margin-top: 20%;
         }
@@ -215,12 +216,12 @@
           font-family: "Graphik Bold";
           font-weight: bold;
           text-anchor: middle;
-          font-size: 28px;
+          font-size: 20px;
         }
 
         .key-label {
           font-family: "Graphik Regular";
-          font-size: 10px;
+          font-size: 11.4px;
           cursor: pointer;
         }
 
@@ -1257,7 +1258,7 @@
 
     #opp-space-tooltip-container {
       grid-column: 4 / span 1;
-      grid-row: 2 / span 2;
+      grid-row: 3 / span 2;
       opacity: 0;
       transition: all .2s linear;
     }
@@ -1308,19 +1309,26 @@ margin-top: 15px;
     <body>
       <div id="compass-description-container">
         <p class="key-label">
-          Hello! Welcome to the Accenture - Accelerating the Energy Transition Compass. This is developed with information
-          from 300+ startups to visualise and show key venture activities around Energy Transition, including Economic &
-          Regulatory Incentive, Social Movement, Micro Scale, End Consumer, Decarbonising Construction, and Solving for
-          Complexity.
+          "Hello! Welcome to our startup compass. This is developed with information from 330+ startups to visualise and show
+          key venture activities with the potential to accelerate European Energy Security. These have been categorised into
+          three routes for immediate impact:
         </p>
+        <!-- <p class="key-label"> -->
+          <ul class="key-label">
+            <li>Use Less: Solutions that enable us to reduce energy consumption, our bills and the supply-demand gap.</li>
+            <li>Unblock Projects: Solutions to prevent construction delays and emissions, enabling us to accelerate cleaner energy
+              infrastructure.</li>
+            <li>Scale Local: Solutions that lower barriers to local, micro-energy adoption, enabling us to harness untapped
+              potential</li>
+          </ul>
+        <!-- </p> -->
         <p class="key-label">
-          Most startups are presented as dots, and 'Hero' startups are presented as stars, which are great illustrative
-          examples of the areas. You can move your mouse to hover on all startups to see more information, as well as click on
-          them to go to the websites. Startups are colour coded with the funding stages as shown in the 'Funding Key' below.
-          You can also click on the stages to filter the startups on the compass. There are 2 toggles below the 'Funding Key',
-          the top toggle rearranges the startups by either founding year or funding stage; the bottom toggle is used to either
-          show all startups with the same opacity or highlight the 'Hero' startups by making non-'Hero' startups slightly
-          transparent.
+          Most startups are presented as dots, and 'Hero' startups are presented as stars, which are great illustrative examples
+          of the areas. You can move your mouse to hover on all startups to see more information, as well as click on them to go
+          to the websites. Startups are colour coded with the funding stages as shown in the 'Funding Key' below. You can also
+          click on the stages to filter the startups on the compass. There are 2 toggles below the 'Funding Key', the top toggle
+          rearranges the startups by either founding year or funding stage; the bottom toggle is used to either show all
+          startups with the same opacity or highlight the 'Hero' startups by making non-'Hero' startups slightly transparent.
         </p>
         <p class="key-label">
           Hope you find this compass useful!
@@ -1692,7 +1700,7 @@ margin-top: 15px;
         var chartTitle = chartSVG
           .append("text")
           .attr("class", "chart-title")
-          .text("Accenture - Accelerating the Energy Transition: Compass")
+          .text("Accelerating European Energy Security By Unleashing Entrepreneurship")
           .attr("y", (-height * 4.55) / 10)
           .style("display", "none");
     
@@ -1707,7 +1715,6 @@ margin-top: 15px;
           .attr("y", -titleLogoHeight / 2)
           .attr("x", -titleLogoWidth / 2)
           .style("display", "none");
-
         d3.csv("dataAccenture_Startup.csv").then(function(data) {
           // console.log(data)
           // let data = dat.filter(row => 
@@ -1719,19 +1726,18 @@ margin-top: 15px;
           // )
           var filteredDataWhenIncCompass = [];
           data.forEach(row => {
-            row['Challenge (Narrative)'] = row['Challenge (Narrative)'].replace(/,/g, ""); // remove comma as it create issue while toggle yearly/maturity
-            row['Challenge (Narrative)'] = row['Challenge (Narrative)'].replace(/@/g, " "); // remove comma as it create issue while toggle yearly/maturity
-
-            row['Cluster']="temp"; // it is temporarily added, so that chart will be drawn and at then end hide it
-
-            if(row['Challenge (Narrative)'].includes('(')){
-              row['Challenge (Narrative)'] = (row['Challenge (Narrative)'].split(') '))[1]
-            } else {
-              row['Challenge (Narrative)'] = row['Challenge (Narrative)']
-            } 
-            
-            if(row['Inc. Compass']=="TRUE"){
-              filteredDataWhenIncCompass.push(row);
+            if (row['Challenge (Tier 1) '] != "") {
+              row['Challenge (Tier 1) '] = row['Challenge (Tier 1) '].replace(/,/g, ""); // remove comma as it create issue while toggle yearly/maturity
+              row['Challenge (Tier 1) '] = row['Challenge (Tier 1) '].replace(/@/g, " "); // remove comma as it create issue while toggle yearly/maturity
+              row['Cluster'] = "temp"; // it is temporarily added, so that chart will be drawn and at then end hide it
+              if (row['Challenge (Tier 1) '].includes('(')) {
+                row['Challenge (Tier 1) '] = (row['Challenge (Tier 1) '].split(') '))[1]
+              } else {
+                row['Challenge (Tier 1) '] = row['Challenge (Tier 1) ']
+              }
+              if (row['Inc. Compass'] == "TRUE") {
+                filteredDataWhenIncCompass.push(row);
+              }
             }
           });
 
@@ -1742,7 +1748,7 @@ margin-top: 15px;
               return d['Cluster']
             })
             .key(function(d) {
-              return d['Challenge (Narrative)']
+              return d['Challenge (Tier 1) ']
             })
             .entries(data);
             
@@ -1777,8 +1783,8 @@ margin-top: 15px;
           })
           data.forEach(row => {
           
-            if(!oppSpaceObj[row['Cluster']].includes(row['Challenge (Narrative)'])){
-              oppSpaceObj[row['Cluster']].push(row['Challenge (Narrative)'])
+            if(!oppSpaceObj[row['Cluster']].includes(row['Challenge (Tier 1) '])){
+              oppSpaceObj[row['Cluster']].push(row['Challenge (Tier 1) '])
             }
 
           });
@@ -1932,7 +1938,6 @@ margin-top: 15px;
                 })
                 update_bar("Amount of Funding")
               }
-
               var svgLayer = L.svg();
               svgLayer.addTo(map);
 
@@ -2135,7 +2140,7 @@ margin-top: 15px;
                 "Series D",
                 "Series E",
                 "Public",
-                "Acquired"
+                "Acquired",
               ];
     
               var fundingCategoryRange = [
@@ -2147,7 +2152,7 @@ margin-top: 15px;
                 "Series C+",
                 "Series C+",
                 "Series C+",
-                "Acquired"
+                "Acquired",
               ];
     
               var fundingCategoryRangeUnique = [...new Set(fundingCategoryRange)];
@@ -2170,7 +2175,7 @@ margin-top: 15px;
                   return d["Cluster"];
                 })
                 .key(function(d) {
-                  return d["Challenge (Narrative)"]
+                  return d['Challenge (Tier 1) ']
                 })
                 .rollup(function(v) {
                   var totalFunding = d3.sum(v, function(d) {
@@ -2225,7 +2230,6 @@ margin-top: 15px;
                   return v.length;
                 })
                 .entries(data);
-                
                 // here we have to add logic of sort objects by funding count
     
               var count_by_year = d3
@@ -2311,7 +2315,7 @@ margin-top: 15px;
                   var number_of_opp_spaces = [
                     ...new Set(
                       d.value.values.map(function(v) {
-                        return v["Challenge (Narrative)"];
+                        return v['Challenge (Tier 1) '];
                       })
                     )
                   ];
@@ -2967,7 +2971,7 @@ margin-top: 15px;
                 .attr("startOffset", "50%")
                 .text("Private");
                 
-           
+              get_minmax(data);
               fundingKey_list_elements = [
                   { name: "Acquired", fn: acquiredLabel },
                   { name: "Series C+", fn: series_cPlusLabel },
@@ -3018,7 +3022,7 @@ margin-top: 15px;
               var nodeData = d3
                 .nest()
                 .key(function(d) {
-                  return d["Challenge (Narrative)"] + "-" +d["Cluster"];
+                  return d['Challenge (Tier 1) '] + "-" +d["Cluster"];
                 })
                 .key(function(d) {
                   return d["Funding Stage"];
@@ -3032,7 +3036,7 @@ margin-top: 15px;
               var nodeSecondData = d3
                 .nest()
                 .key(function(d, i) {
-                  return d["Challenge (Narrative)"] + "-" +d["Cluster"];
+                  return d['Challenge (Tier 1) '] + "-" +d["Cluster"];
                 })
                 .key(function(d) {
                   return d["Founded"];
@@ -3054,9 +3058,9 @@ margin-top: 15px;
             // position maturity node in the compass
             data.forEach(function(d) {
               for (i = 0; i < chartPieData.length; i++) {
-                if (d["Challenge (Narrative)"] === chartPieData[i].data.value.key && d["Cluster"] === chartPieData[i].data.value.parent) {
-                  var tmp_startAngleMin = chartPieData[i].startAngle
-                  var tmp_endAngleMax = chartPieData[i].endAngle
+                if (d['Challenge (Tier 1) '] === chartPieData[i].data.value.key && d["Cluster"] === chartPieData[i].data.value.parent) {
+                  tmp_startAngleMin = chartPieData[i].startAngle
+                  tmp_endAngleMax = chartPieData[i].endAngle
                   break;
                 }
               }
@@ -3068,7 +3072,7 @@ margin-top: 15px;
                 }
               }
               for (i = 0; i < nodeData.length; i++) {
-                if (nodeData[i].key === d["Challenge (Narrative)"] + "-" +d["Cluster"]) {
+                if (nodeData[i].key === d['Challenge (Tier 1) '] + "-" +d["Cluster"]) {
                   for (j = 0; j < nodeData[i].values.length; j++) {
                     if (nodeData[i].values[j].key === d["Funding Stage"] && tmp_innerRadiusMin != undefined) {
                       
@@ -3087,7 +3091,8 @@ margin-top: 15px;
                           tmp_innerRadiusMin,
                           tmp_outerRadiusMax,
                           congestion,
-                          nodeList
+                          nodeList,
+                          d
                         );  
                         
                       } else {
@@ -3099,7 +3104,7 @@ margin-top: 15px;
                           tmp_outerRadiusMax,
                           nodeData[i].values[j]
                         )
-                        indexTracker[d["Challenge (Narrative)"]][d["Funding Stage"]]["slot"] += 1
+                        indexTracker[d['Challenge (Tier 1) ']][d["Funding Stage"]]["slot"] += 1
                       }
                     }
                   }
@@ -3115,11 +3120,11 @@ margin-top: 15px;
               }
               d.opacity = 1;
             });
-
+            
               // position year nodes
               data.forEach(function(d) {
                 for (i = 0; i < chartPieData.length; i++) {
-                  if (d["Challenge (Narrative)"] === chartPieData[i].data.value.key && d["Cluster"] === chartPieData[i].data.value.parent) {
+                  if (d['Challenge (Tier 1) '] === chartPieData[i].data.value.key && d["Cluster"] === chartPieData[i].data.value.parent) {
                     tmp_startAngleMin = chartPieData[i].startAngle
                     tmp_endAngleMax = chartPieData[i].endAngle
 
@@ -3136,7 +3141,7 @@ margin-top: 15px;
                 }
                 var congestion;
                 for (i = 0; i < nodeSecondData.length; i++) {
-                  if (nodeSecondData[i].key === d["Challenge (Narrative)"] + "-" +d["Cluster"]) {
+                  if (nodeSecondData[i].key === d['Challenge (Tier 1) '] + "-" +d["Cluster"]) {
                     for (j = 0; j < nodeSecondData[i].values.length; j++) {
                       if (nodeSecondData[i].values[j].key === d["Founded"]) {
                           congestion = calcCongestion(
@@ -3167,17 +3172,17 @@ margin-top: 15px;
                               )
                             
                           }
-                          if (indexTrackerYear[d["Challenge (Narrative)"]] === undefined) {
-                            indexTrackerYear[d["Challenge (Narrative)"]] = {}
-                            indexTrackerYear[d["Challenge (Narrative)"]][d["Founded"]] = {
+                          if (indexTrackerYear[d['Challenge (Tier 1) ']] === undefined) {
+                            indexTrackerYear[d['Challenge (Tier 1) ']] = {}
+                            indexTrackerYear[d['Challenge (Tier 1) ']][d["Founded"]] = {
                               slot: 1
                             }
-                          } else if (indexTrackerYear[d["Challenge (Narrative)"]][d["Founded"]] === undefined) {
-                            indexTrackerYear[d["Challenge (Narrative)"]][d["Founded"]] = {
+                          } else if (indexTrackerYear[d['Challenge (Tier 1) ']][d["Founded"]] === undefined) {
+                            indexTrackerYear[d['Challenge (Tier 1) ']][d["Founded"]] = {
                               slot: 1
                             }
                           } else {
-                            indexTrackerYear[d["Challenge (Narrative)"]][d["Founded"]]["slot"] += 1
+                            indexTrackerYear[d['Challenge (Tier 1) ']][d["Founded"]]["slot"] += 1
                           }
                       }
                     }
@@ -3301,7 +3306,7 @@ margin-top: 15px;
 
               var radiusSize = 0.1;
 
-              const legendItemsNames = ["Private","Seed", "Series A", "Series B", "Series C"];
+              const legendItemsNames = ["Private","Seed", "Series A", "Series B", "Series C",];
               
               // circle nodes in compass
               var nodes = chartSVG
@@ -3434,9 +3439,11 @@ margin-top: 15px;
                 .attr("transform", function(d) {
                   return "translate(" + d.yearX + "," + d.yearY + ")";
                 })
-                .attr("d", "M 0 4.1875 l -4.188 2.202 l 0.7995 -4.6635 L -6.7763 -1.577 l 4.6822 -0.6803 L 0 -6.5 l 2.094 4.2428 l 4.6822 0.6803 l -3.3878 3.303 l 0.7995 4.6635")
+                .attr("d", function(d){
+                  if (legendItemsNames.includes(d["Funding Stage"]) || d["Funding Stage"]=="Acquired")
+                  return "M 0 4.1875 l -4.188 2.202 l 0.7995 -4.6635 L -6.7763 -1.577 l 4.6822 -0.6803 L 0 -6.5 l 2.094 4.2428 l 4.6822 0.6803 l -3.3878 3.303 l 0.7995 4.6635"})
                 .attr("fill", function(d) {
-                  if(d.Hero=="TRUE" && d['Funding Stage']=="Acquired"){
+                  if(d.Hero=="TRUE" && d['Funding Stage'] == "Acquired"){
                     return "#ffd966ff";
                   }else{
                     return nodeColorScale(
@@ -4037,8 +4044,7 @@ margin-top: 15px;
                   .sortKeys(maturitySort)
                   .entries(bar_data.filter(function(d) {
                     return d['Funding Stage'] != ""
-                  }) )
-                
+                  }))
                 var maxVal = d3.max(fundingKey_data, function(d) {
                   return d.value.startups
                 })
@@ -4204,6 +4210,14 @@ margin-top: 15px;
                   .duration(animationDuration)
                   .attrTween("cx", function(d) {
                     var i = d3.interpolate(d.yearX, d.x);
+                //     var filterkeyData= fundingKey_data.filter(function (item) {
+                //     //var deptts = deptselected.split(',');
+                //         if (item["key"] == d["Funding Stage"])
+                //             return true;
+                //     return false;
+                // });
+                // console.log(filterkeyData);
+                // debugger;
                     return function(t) {
                       return i(t);
                     };
@@ -4221,11 +4235,10 @@ margin-top: 15px;
                   .attrTween("transform", function(d) {
                     var i = d3.interpolate(d.yearX, d.x);
                     var j = d3.interpolate(d.yearY, d.y);
-                    return function(t) {
+                    return function(t) {//['Total Funding (USD)']
                       return "translate(" + i(t) + "," + j(t) + ") rotate(45)";
                     };
                   });
-
                   nodes_Stars
                   .transition()
                   .duration(animationDuration)
@@ -4273,7 +4286,7 @@ margin-top: 15px;
               var count_by_focus_area = d3
                 .nest()
                 .key(function(d) {
-                  return d["Challenge (Narrative)"];
+                  return d['Challenge (Tier 1) '];
                 })
               .sortKeys(function(a, b) {
                 let aVal = 0
@@ -4299,7 +4312,7 @@ margin-top: 15px;
                 );
 
               nodes.attr("opacity", function(d) {
-                if (d["Challenge (Narrative)"] === segment_data.data.value.key && d['Cluster'] === segment_data.data.value.parent) {
+                if (d['Challenge (Tier 1) '] === segment_data.data.value.key && d['Cluster'] === segment_data.data.value.parent) {
                   return 1;
                 } else {
                   return 0.3;
@@ -4307,7 +4320,7 @@ margin-top: 15px;
               });
 
               nodes_acquired.attr("opacity", function(d) {
-                if (d["Challenge (Narrative)"] === segment_data.data.value.key && d['Cluster'] === segment_data.data.value.parent) {
+                if (d['Challenge (Tier 1) '] === segment_data.data.value.key && d['Cluster'] === segment_data.data.value.parent) {
                   return 1;
                 } else {
                   return 0.3;
@@ -4315,7 +4328,7 @@ margin-top: 15px;
               });
 
               nodes_Stars.attr("opacity", function(d) {
-                if (d["Challenge (Narrative)"] === segment_data.data.value.key && d['Cluster'] === segment_data.data.value.parent) {
+                if (d['Challenge (Tier 1) '] === segment_data.data.value.key && d['Cluster'] === segment_data.data.value.parent) {
                   return 1;
                 } else {
                   return 0.3;
@@ -4434,7 +4447,7 @@ margin-top: 15px;
               var count_by_focus_area = d3
                 .nest()
                 .key(function(d) {
-                  return d["Challenge (Narrative)"];
+                  return d['Challenge (Tier 1) '];
                 })
                 .sortKeys(function(a, b) {
                   let aVal = 0
@@ -4517,8 +4530,8 @@ margin-top: 15px;
               d3.select(".node-tooltip-title").text(d.Hero=="TRUE"? d.Name+" (Hero)":d.Name);
               d3.select(".node-tooltip-funding").text("Total Funding: " + (fundingVal));
               d3.select(".node-tooltip-website").text("Startup Website: " + (d["Website"]));
-              d3.select(".node-tooltip-solutionspace").text("Solution Space: " + (d["Solution Space (Cluster)"]));
-              d3.select(".node-tooltip-description").text(d["Description"].replace(/�۪/g, "'"));
+              d3.select(".node-tooltip-solutionspace").text("Solution Space: " + (d["Solution Space (Tier 2) "]));
+              d3.select(".node-tooltip-description").text(d["Full Description (Small paragraph)"].replace(/�۪/g, "'"));
 
               d3.select(".node-tooltip")
                 .style("opacity", 1);
@@ -5339,6 +5352,26 @@ margin-top: 15px;
           return [tmp_x, tmp_y];
 
           }
+          var minmaxArray = []
+        function get_minmax(data){
+          var fundingKey_data = d3.nest()
+                  .key(function(d) {
+                    return d["Funding Stage"]
+                  })
+                  .entries(data.filter(function(d) {
+                    return d['Funding Stage'] != ""
+                  }))
+                  for (let index = 0; index < fundingKey_data.length; index++) {
+                    const element = fundingKey_data[index];
+                    let obj={"key":"","min":0,"max":0}
+                    obj.key=element.key;
+                    var minmaxValue=d3.extent(element.values,(d)=>Number(d['Total Funding (USD)'].toString().replace(/[^0-9\.-]+/g,"")))
+                    obj.min=minmaxValue[0]
+                    obj.max=minmaxValue[1];
+                    minmaxArray.push(obj);
+                  }
+                  return fundingKey_data;
+        }
 
         function assignRandom(
           tmp_startAngleMin,
@@ -5346,19 +5379,46 @@ margin-top: 15px;
           tmp_innerRadiusMin,
           tmp_outerRadiusMax,
           congestion,
-          nodeList
+          nodeList,
+          d
         ) {
-          tmp_startAngle =
+          var total_funding;
+          var scaleToLocatePoint=d3.scaleLinear()
+          if(d != undefined){
+            var currentData = minmaxArray.filter(function (item) {
+                        if (item["key"] == d['Funding Stage'])
+                            return true;
+                    return false;
+                });
+                scaleToLocatePoint
+                .domain([currentData[0].min,currentData[0].max])
+                .range([0.05,0.9]);
+            total_funding=
+            Number(d['Total Funding (USD)'].replace(/[^0-9\.-]+/g,""))
+            tmp_startAngle =
             Math.random() * (tmp_endAngleMax - tmp_startAngleMin) +
             tmp_startAngleMin;
           tmp_endAngle =
-            Math.random() * (tmp_endAngleMax - tmp_startAngle) + tmp_startAngle;
+          Math.random() * (tmp_endAngleMax - tmp_startAngle) + tmp_startAngle;
           tmp_innerRadius =
-            Math.random() * (tmp_outerRadiusMax - tmp_innerRadiusMin) +
+          scaleToLocatePoint(total_funding) * (tmp_outerRadiusMax - tmp_innerRadiusMin) +
             tmp_innerRadiusMin;
           tmp_outerRadius =
-            Math.random() * (tmp_outerRadiusMax - tmp_innerRadius) +
+          scaleToLocatePoint(total_funding) * (tmp_outerRadiusMax - tmp_innerRadius) +
             tmp_innerRadius;
+          }else{
+            tmp_startAngle =
+            Math.random() * (tmp_endAngleMax - tmp_startAngleMin) +
+            tmp_startAngleMin;
+          tmp_endAngle =
+          Math.random() * (tmp_endAngleMax - tmp_startAngle) + tmp_startAngle;
+          tmp_innerRadius =
+          Math.random() * (tmp_outerRadiusMax - tmp_innerRadiusMin) +
+            tmp_innerRadiusMin;
+          tmp_outerRadius =
+          Math.random() * (tmp_outerRadiusMax - tmp_innerRadius) +
+            tmp_innerRadius;
+          }
           tmp_gen = d3
             .arc()
             .innerRadius(tmp_innerRadius)
